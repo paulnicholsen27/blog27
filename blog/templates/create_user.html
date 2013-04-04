@@ -1,0 +1,35 @@
+{% extends 'bbase.html' %}
+
+{% block site_wrapper %}
+        <form method="post" action="." class="new_user"> {% csrf_token %}
+                {{ form.as_p }}
+            <div id="error">{{ empty_field_error }}</div>
+        <table>
+            <tr>
+                <td>User Name:  <input type="text" name="username" value={{ username }}></td>
+                <td id="error">{{ invalid_username_error }}</td>
+            </tr>
+            <tr>
+                <td>First Name:  <input type="text" name="first_name" value={{ first_name }} ></td>
+            </tr>
+            <tr>
+                <td>Last Name:  <input type="text" name="last_name" value = {{ last_name }}></td>
+            </tr>
+            <tr>
+                <td>Email:  <input type="text" name="email" value= {{ email }} ></td>
+                <td id=error>{{ invalid_email_error }}</td>
+            </tr>
+            <tr>
+                <td>Password:  <input type="password" name="password" value=""></td>
+                <td id=error>{{ invalid_password_error }}</td>
+
+            </tr>
+            <tr>
+                <td>Retype Password:  <input type="password" name="confirm"></td>
+                <td id=error>{{ different_passwords_error }}</td>
+            </tr>
+        </table>
+
+            <button type="submit">Create User</button>
+        </form>
+{% endblock %}

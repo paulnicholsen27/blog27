@@ -1,0 +1,18 @@
+  {% load catalog_filters %}
+
+  {% block content %}
+      <article>
+
+        <h3><a href="/entry/{{post.id}}">{{post.title}}</a></h3>
+        <h6>Written by <a href="{{post.author}}">{{post.author}}</a> on {{post.created}}.</h6>
+
+        <div class="row">
+          <div class="large-6 columns">
+              {{post.content|shorten|linebreaks}} 
+            <div class="commentlink"><a href="/entry/{{post.id}}">Comments</a></div>          
+          </div>
+        </div>
+
+      </article>
+      <hr />
+    {% endblock %}

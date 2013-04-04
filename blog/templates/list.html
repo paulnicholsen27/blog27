@@ -1,0 +1,118 @@
+{% extends 'bbase.html' %}
+
+{% load catalog_filters %}
+
+{% block site_wrapper %}
+
+<!-- Nav Bar -->
+
+  <div class="row">
+    <div class="large-12 columns">
+      <div class="nav-bar right">
+       <ul class="button-group">
+         <li><a href="#" class="button">Link 1</a></li>
+         <li><a href="#" class="button">Link 2</a></li>
+         <li><a href="#" class="button">Link 3</a></li>
+         <li><a href="#" class="button">Link 4</a></li>
+        </ul>
+      </div>
+      {% if author %}
+      <h1>{{author}}'s Blog</h1>
+      {% else %}
+      <h1>Most recent posts</h1>
+      {% endif %}
+      <hr />
+
+    </div>
+  </div>
+
+  <!-- End Nav -->
+
+
+  <!-- Main Page Content and Sidebar -->
+
+  <div class="row">
+
+    <!-- Main Blog Content -->
+    <div class="large-9 columns" role="content">
+
+    {% if posts %}  
+      {% for post in posts %}
+        <p>{% include 'abbreviated_entry.html' %}</p>
+      {% endfor %}
+    {% else %}
+        <h3>This author has no posts to show.</h3>
+    {% endif %}
+
+
+
+
+
+    </div>
+
+    <!-- End Main Content -->
+
+
+    <!-- Sidebar -->
+
+    <aside class="large-3 columns">
+
+      <h5>Categories</h5>
+      <ul class="side-nav">
+        <li><a href="#">News</a></li>
+        <li><a href="#">Code</a></li>
+        <li><a href="#">Design</a></li>
+        <li><a href="#">Fun</a></li>
+        <li><a href="#">Weasels</a></li>
+      </ul>
+
+      <div class="panel">
+        <h5>Featured</h5>
+        <p>Pork drumstick turkey fugiat. Tri-tip elit turducken pork chop in. Swine short ribs meatball irure bacon nulla pork belly cupidatat meatloaf cow.</p>
+        <a href="#">Read More &rarr;</a>
+      </div>
+
+    </aside>
+
+    <!-- End Sidebar -->
+  </div>
+
+  <!-- End Main Content and Sidebar -->
+
+
+  <!-- Footer -->
+
+  <footer class="row">
+    <div class="large-12 columns">
+      <hr />
+      <div class="row">
+        <div class="large-6 columns">
+        </div>
+        <div class="large-6 columns">
+
+                  <!-- Next/Prev page links  -->
+        {% if posts and posts.paginator.num_pages > 1 %}
+
+        <div class="pagination">
+            <span class="step-links">
+                {% if posts.has_previous %}
+                    <a href= "?page={{ posts.previous_page_number }}">newer entries &lt;&lt; </a>
+                {% endif %}
+
+                <span class="current">
+                    &nbsp;Page {{ posts.number }} of {{ posts.paginator.num_pages }}
+                </span>
+
+                {% if posts.has_next %}
+                    <a href="?page={{ posts.next_page_number }}"> &gt;&gt; older entries</a>
+                {% endif %}
+            </span>
+        </div>
+
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  {% endblock %}

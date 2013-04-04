@@ -1,0 +1,41 @@
+	{% load catalog_filters %}
+	{% load comments %}
+
+	{% block content %}
+			<article>
+				<h3><a href="#">{{post.title}}</a></h3>
+				<h6>Written by <a href="/{{post.author}}/">{{post.author}}</a>
+				 on {{post.created}}</h6>
+
+				<div class="row">
+					<div class="large-6 columns">
+						{{post.content|linebreaks}}
+					</div>
+				</div>
+
+			<!-- Comments  -->
+			<p>Comments:</p>
+			{% render_comment_list for post %}
+
+			<br>
+			<br>
+			<hr>
+			<div>Add a comment</div>
+			<!-- Comment form  -->
+{% if user.is_authenticated %}
+    {% get_comment_form for object as form %}
+    <form action="{% comment_form_target %}" method="POST">
+    {% csrf_token %}
+    {{ form.comment }}
+    {{ form.honeypot }}
+    {{ form.content_type }}
+    {{ form.object_pk }}
+    {{ form.timestamp }}
+    {{ form.security_hash }}
+    <input type="hidden" name="next" value="{% url 'object_detail_view' object.id %}" />
+    <input type="submit" value="Add comment" id="id_submit" />
+    </form>
+{% else %}
+    <p>Please <a href="#">log in</a> to leave a comment.</p>
+{% endif %}
+		{% endblock %}
