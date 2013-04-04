@@ -85,11 +85,11 @@ def create_user(request):
 			user.last_name = last_name
 			user.save()
 			request.session['user'] = user
-			return redirect(str(user.username))
+			return redirect('/' + str(user.username) + '/')
 
 def main(request, username=None):
 	#front page of blog
-
+	users = User.objects.all()[:5]
 	if username:
 		try:
 			author = User.objects.get(username__iexact = username)
@@ -117,32 +117,16 @@ def main(request, username=None):
 
 	return render_to_response("list.html", dict(posts = posts, 
 												user = request.user, 
-												author = author))
+												author = author,
+												users = users))
 
 def post(request, post_key):
 	post = Post.objects.get(id = post_key)
 	return render_to_response("full_entry.html", dict(post=post))
 
+def logout(request):
+	#logsout user and returns to main page
+	logout(request)
+	return redirect('/')
 
 
-class CommentForm(ModelForm):
-	class Meta:
-		model = Comment
-		exclude = ["post"]
-
-def add_comment(request, pk):
-	"""Add a new comment."""
-	p = request.POST
-
-	if p.has_key("body") and p["body"]:
-		author = "Anonymous"
-		if p["author"]: author = p["author"]
-
-		comment = Comment(post=Post.objects.get(pk=pk))
-		cf = CommentForm(p, instance=comment)
-		cf.fields["author"].required = False
-
-		comment = cf.save(commit=False)
-		comment.author = author
-		comment.save()
-	return HttpResponseRedirect(reverse("dbe.blog.views.post", args=[pk]))
