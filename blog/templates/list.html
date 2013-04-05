@@ -11,6 +11,7 @@
       <div class="nav-bar right"> 
       
       {% if user.is_authenticated %}
+      <br>
       <div id='welcome'> Welcome {{ user.first_name }}!
 
           <div>
@@ -19,17 +20,22 @@
       </div>
 
       {% else %}
+
+      <div id='error'>{{ error_message }}</div> 
+      <div>
         <form method="post" action="." class="login"> {% csrf_token %}
         {{ form.as_p }}
-          <p id='error'>{{ error_message }}</p>
+          
           User Name: <input type="text" name="username">
           Password: <input type="password" name="password">
           <button type="submit">Log In</button>
         </form>
-        <p><a href="/create_user/">New User</a></p>    
+        <p><a href="/create_user/">New User</a></p>
+      </div>   
       {% endif %}
       </div>
-     
+ 
+            
       {% if author %}
         <h1>{{author}}'s Blog</h1>
       {% else %}
@@ -49,7 +55,7 @@
 
     <!-- Main Blog Content -->
     <div class="large-9 columns" role="content">
-
+      <p><a href="#" data-reveal-id="exampleModal" class="radius button">Example Modal…</a></p>
     {% if posts %}  
       {% for post in posts %}
         <p>{% include 'abbreviated_entry.html' %}</p>

@@ -17,17 +17,27 @@
 					</div>
 				</div>
 
-			<!-- Comments  -->
-			<p>Comments:</p>
-			{% get_comment_count for post as comment_count %}
-			<p>{{ comment_count }} comment(s) have been posted.</p>
-			
-			{% render_comment_list for post %}
+		<!-- Comments  -->
+		{% if comments %}
+		    <p>Comments:</p>
+		{% endif %}
 
-			<br>
-			<br>
-			<hr>
-			<div>Add a comment</div>
+		{% for comment in comments %}
+		    <div class="comment">
+		        <div class="time">{{ comment.created }} | {{ comment.user }}</div>
+		        <div class="body">{{ comment.content|linebreaks }}</div>
+		    </div>
+		{% endfor %}
+
+		<div id="addc">Add a comment</div>
+		<!-- Comment form  -->
+		<form action="{% url "blog.views.add_comment" post.id %}" method="POST">{% csrf_token %}
+		    <div id="cform">
+		        Name: {{ form.author }}
+		        <p>{{ form.body|linebreaks }}</p>
+		    </div>
+		    <div id="submit"><input type="submit" value="Submit"></div>
+		</form>
 
 
 		{% endblock %}

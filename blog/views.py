@@ -5,7 +5,12 @@ from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.forms import ModelForm
+from django.core.context_processors import csrf
+from django.http import HttpResponseRedirect
 import re
+
+ 
+
 
 from blog.models import *
 
@@ -20,6 +25,8 @@ def valid_password(password):
 EMAIL_RE = re.compile("^[\S]+@[\S]+\.[\S]+$")   
 def valid_email(email):
 	return EMAIL_RE.match(email)
+
+
 
 def create_user(request):
 
@@ -107,7 +114,7 @@ def main(request, username=None):
 		author = None
 
 
-	if request.method == 'POST': 
+	if request.method == 'POST':
 		user = authenticate(username = request.POST['username'], 
 							password = request.POST['password'])
 		if user:
@@ -115,7 +122,7 @@ def main(request, username=None):
 			request.session['user'] = user
 			
 		else:
-			error_message = "No user was found.  Please check your username/password and try again."
+			error_message = "Please check your username/password and try again. (Both name and password are case-sensitive!)"
 			return render_to_response("list.html", 
 									   dict(posts = posts, 
 										 user = request.user, 
@@ -142,15 +149,44 @@ def main(request, username=None):
 								   users = users),
 						      context_instance=RequestContext(request))
 
-def post(request, post_key):
-	post = Post.objects.get(id = post_key)
+def post(request, pk):
+	#shows one full post with comments
+	post = Post.objects.get(id = pk)
+	comments = Comment.objects.filter(post=post)
+	d = dict(post=post,
+	  	     comments=comments,
+	  	     form=CommentForm,
+	  	     user=request.user)
+	d.update(csrf(request))
 	return render_to_response("full_entry.html", 
-							  dict(post=post),
+							  d,
 							  context_instance=RequestContext(request))
 
 def log_out(request):
 	#logsout user and returns to main page
 	logout(request)
 	return redirect('/')
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        exclude = ["post"]
+
+def add_comment(request, pk):
+    """Add a new comment."""
+    p = request.POST
+
+    if p.has_key("body") and p["body"]:
+        author = "Anonymous"
+        if p["author"]: author = p["author"]
+
+        comment = Comment(post=Post.objects.get(pk=pk))
+        cf = CommentForm(p, instance=comment)
+        cf.fields["author"].required = False
+
+        comment = cf.save(commit=False)
+        comment.author = author
+        comment.save()
+    return HttpResponseRedirect(reverse("blog.views.post", args=[pk]))
 
 

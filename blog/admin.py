@@ -13,7 +13,7 @@ class PostAdmin(admin.ModelAdmin):
 admin.site.register(Post, PostAdmin)
 
 class CommentAdmin(admin.ModelAdmin):
-	display_fields = ["post", "author", "created"]
+	display_fields = ["content", "user", "created"]
 
 admin.site.register(Comment, CommentAdmin)
 

@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class Post(models.Model):
 	title = models.CharField(max_length=255)
 	slug = models.SlugField(unique=True, max_length=255)
-	content = models.TextField()
+	content = models.TextField(unique=True)
 	published = models.BooleanField(default=True)
 	created = models.DateTimeField(auto_now_add=True)
 	author = models.ForeignKey(User)
@@ -28,5 +28,5 @@ class Comment(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return unicode("%s: %s" % (self.post, self.body[:60]))
+		return unicode("%s: %s" % (self.post, self.content[:60]))
 

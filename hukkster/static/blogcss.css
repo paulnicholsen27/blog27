@@ -1225,7 +1225,7 @@ blockquote p {
 
   .show-for-print {
     display: inherit !important; } }
-button, .button,{
+button, .button {
   border-style: solid;
   border-width: 1px;
   cursor: pointer;
