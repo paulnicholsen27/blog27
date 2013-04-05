@@ -10,7 +10,7 @@ urlpatterns = patterns('blog.views',
 	url(r'^entry/(?P<post_key>\d+)/$', 'post'), # links to single post by fk
     url(r'^create_user/$', 'create_user'),
     url(r'^comments/', include('django.contrib.comments.urls')),
-    url(r'^logout/', 'logout'),
+    url(r'^logout/', 'log_out'),
 	url(r'^(?P<username>\w{0,20})/$', 'main'), #must go last--will try to match anything to username
 
     # Uncomment the admin/doc line below to enable admin documentation:

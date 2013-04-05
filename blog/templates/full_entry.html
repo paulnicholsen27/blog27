@@ -5,6 +5,7 @@
 
 
 	{% block site_wrapper %}
+	<button type="submit"><a href="/{{post.author}}/">Back to list</a></button>
 			<article>
 				<h3><a href="#">{{post.title}}</a></h3>
 				<h6>Written by <a href="/{{post.author}}/">{{post.author}}</a>
@@ -18,33 +19,15 @@
 
 			<!-- Comments  -->
 			<p>Comments:</p>
+			{% get_comment_count for post as comment_count %}
+			<p>{{ comment_count }} comment(s) have been posted.</p>
+			
 			{% render_comment_list for post %}
 
 			<br>
 			<br>
 			<hr>
 			<div>Add a comment</div>
-			<!-- Comment form  -->
-{% if user.is_authenticated %}
-    {% get_comment_form for object as form %}
-    <form action="{% comment_form_target %}" method="POST">
-    {% csrf_token %}
-    {{ form.comment }}
-    {{ form.honeypot }}
-    {{ form.content_type }}
-    {{ form.object_pk }}
-    {{ form.timestamp }}
-    {{ form.security_hash }}
-    <input type="hidden" name="next" value="{% url 'object_detail_view' object.id %}" />
-    <input type="submit" value="Add comment" id="id_submit" />
-    </form>
-{% else %}
-    <p>Please <a href="#" data-reveal-id="myModal">Click Me For A Modal</a> to leave a comment.</p>
-{% endif %}
-<div id="myModal" class="reveal-modal">
-  <h2>Awesome. I have it.</h2>
-  <p class="lead">Your couch.  It is mine.</p>
-  <p>Im a cool paragraph that lives inside of an even cooler modal. Wins</p>
-  <a class="close-reveal-modal">&#215;</a>
-</div>
+
+
 		{% endblock %}

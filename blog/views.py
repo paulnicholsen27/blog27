@@ -84,25 +84,45 @@ def create_user(request):
 			user.first_name = first_name
 			user.last_name = last_name
 			user.save()
+			user.authenticate(username, password)
 			request.session['user'] = user
+			login(request, user)
 			return redirect('/' + str(user.username) + '/')
 
 def main(request, username=None):
 	#front page of blog
 	users = User.objects.all()[:5]
-	if username:
+
+	if username: #shows posts by username typed into URL
 		try:
 			author = User.objects.get(username__iexact = username)
-		except User.DoesNotExist:
+		except User.DoesNotExist:  #!!!Just make this a 404
 			error_message = "Sorry, there is no author with that name."
 			return render_to_response("error_page.html", 
 									   dict(error_message = error_message))
 		posts = Post.objects.filter(author = author).order_by("-created")
 	
-	else:
+	else: #shows posts by all authors
 		posts = Post.objects.all()
 		author = None
 
+
+	if request.method == 'POST': 
+		user = authenticate(username = request.POST['username'], 
+							password = request.POST['password'])
+		if user:
+			login(request, user)
+			request.session['user'] = user
+			
+		else:
+			error_message = "No user was found.  Please check your username/password and try again."
+			return render_to_response("list.html", 
+									   dict(posts = posts, 
+										 user = request.user, 
+										 author = author,
+										 users = users,
+										 error_message = error_message),
+									   context_instance=RequestContext(request))
 	paginator = Paginator(posts, 2)
 
 	try: 
@@ -115,16 +135,20 @@ def main(request, username=None):
 	except (InvalidPage, EmptyPage):
 		posts = paginator.page(paginator.num_pages)
 
-	return render_to_response("list.html", dict(posts = posts, 
-												user = request.user, 
-												author = author,
-												users = users))
+	return render_to_response("list.html", 
+							  dict(posts = posts, 
+								   user = request.user, 
+								   author = author,
+								   users = users),
+						      context_instance=RequestContext(request))
 
 def post(request, post_key):
 	post = Post.objects.get(id = post_key)
-	return render_to_response("full_entry.html", dict(post=post))
+	return render_to_response("full_entry.html", 
+							  dict(post=post),
+							  context_instance=RequestContext(request))
 
-def logout(request):
+def log_out(request):
 	#logsout user and returns to main page
 	logout(request)
 	return redirect('/')

@@ -9,28 +9,31 @@
   <div class="row">
     <div class="large-12 columns">
       <div class="nav-bar right"> 
-        {% if user.is_authenticated %}
+      
+      {% if user.is_authenticated %}
       <div id='welcome'> Welcome {{ user.first_name }}!
+
           <div>
             <a href="/logout/">Not {{user.first_name}}? Click here</a>
           </div>
       </div>
+
       {% else %}
-          <form method="post" action="." class="login"> {% csrf_token %}
+        <form method="post" action="." class="login"> {% csrf_token %}
         {{ form.as_p }}
-        <p id='error'>{{ error_message }}</p>
-        User Name: <input type="text" name="username">
-        Password: <input type="password" name="password">
-        <button type="submit">Log In</button>
-    </form>
-        <p><a href="/createuser/">New User</a></p>    
+          <p id='error'>{{ error_message }}</p>
+          User Name: <input type="text" name="username">
+          Password: <input type="password" name="password">
+          <button type="submit">Log In</button>
+        </form>
+        <p><a href="/create_user/">New User</a></p>    
       {% endif %}
       </div>
      
       {% if author %}
-      <h1>{{author}}'s Blog</h1>
+        <h1>{{author}}'s Blog</h1>
       {% else %}
-      <h1>Most recent posts</h1>
+        <h1>Most recent posts</h1>
       {% endif %}
       <hr />
 
