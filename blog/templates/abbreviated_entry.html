@@ -8,7 +8,7 @@
 
         <div class="row">
           <div class="large-6 columns">
-              {{post.content|shorten|linebreaks}} 
+              {{post.content|shorten:post.id|linebreaks}} 
             <div class="commentlink"><a href="/entry/{{post.id}}">Comments</a></div>          
           </div>
         </div>
