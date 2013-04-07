@@ -2747,7 +2747,6 @@ form.custom {
 
 .reveal-modal {
   visibility: hidden;
-  display: none;
   position: absolute;
   left: 50%;
   z-index: 99;

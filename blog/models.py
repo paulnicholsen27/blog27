@@ -10,6 +10,7 @@ class Post(models.Model):
 	published = models.BooleanField(default=True)
 	created = models.DateTimeField(auto_now_add=True)
 	author = models.ForeignKey(User)
+	notes = models.TextField(null=True)
 
 	class Meta:
 		ordering = ['-created']

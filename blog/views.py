@@ -1,18 +1,17 @@
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.forms import ModelForm
 from django.core.context_processors import csrf
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import user_passes_test
 import re
 
- 
-
-
 from blog.models import *
+from forms import *
 
 USER_RE = re.compile(r"^[a-zA-Z0-9]{3,20}$")
 def valid_username(username):
@@ -96,6 +95,7 @@ def create_user(request):
 			login(request, user)
 			return redirect('/' + str(user.username) + '/')
 
+
 def main(request, username=None):
 	#front page of blog
 	users = User.objects.all()[:5]
@@ -113,8 +113,8 @@ def main(request, username=None):
 		posts = Post.objects.all()
 		author = None
 
-
-	if request.method == 'POST':
+	#login user
+	if request.method == 'POST' and 'login' in request.POST:
 		user = authenticate(username = request.POST['username'], 
 							password = request.POST['password'])
 		if user:
@@ -130,6 +130,7 @@ def main(request, username=None):
 										 users = users,
 										 error_message = error_message),
 									   context_instance=RequestContext(request))
+	#pagination
 	paginator = Paginator(posts, 2)
 
 	try: 
@@ -142,21 +143,32 @@ def main(request, username=None):
 	except (InvalidPage, EmptyPage):
 		posts = paginator.page(paginator.num_pages)
 
+	#new entry form
+	if request.method == 'POST' and 'add' in request.POST:
+		form = PostForm(request.POST or None)
+		if form.is_valid():
+			post = form.save(commit=False)
+			post.author = request.user
+			post.save()
+			return redirect(post)
 	return render_to_response("list.html", 
 							  dict(posts = posts, 
 								   user = request.user, 
 								   author = author,
 								   users = users),
-						      context_instance=RequestContext(request))
+							  context_instance=RequestContext(request))
+
+
+
 
 def post(request, pk):
 	#shows one full post with comments
 	post = Post.objects.get(id = pk)
 	comments = Comment.objects.filter(post=post)
 	d = dict(post=post,
-	  	     comments=comments,
-	  	     form=CommentForm,
-	  	     user=request.user)
+			 comments=comments,
+			 form=CommentForm,
+			 user=request.user)
 	d.update(csrf(request))
 	return render_to_response("full_entry.html", 
 							  d,
@@ -168,25 +180,25 @@ def log_out(request):
 	return redirect('/')
 
 class CommentForm(ModelForm):
-    class Meta:
-        model = Comment
-        exclude = ["post"]
+	class Meta:
+		model = Comment
+		exclude = ["post"]
 
 def add_comment(request, pk):
-    """Add a new comment."""
-    p = request.POST
+	"""Add a new comment."""
+	p = request.POST
 
-    if p.has_key("body") and p["body"]:
-        author = "Anonymous"
-        if p["author"]: author = p["author"]
+	if p.has_key("body") and p["body"]:
+		author = "Anonymous"
+		if p["author"]: author = p["author"]
 
-        comment = Comment(post=Post.objects.get(pk=pk))
-        cf = CommentForm(p, instance=comment)
-        cf.fields["author"].required = False
+		comment = Comment(post=Post.objects.get(pk=pk))
+		cf = CommentForm(p, instance=comment)
+		cf.fields["author"].required = False
 
-        comment = cf.save(commit=False)
-        comment.author = author
-        comment.save()
-    return HttpResponseRedirect(reverse("blog.views.post", args=[pk]))
+		comment = cf.save(commit=False)
+		comment.author = author
+		comment.save()
+	return HttpResponseRedirect(reverse("blog.views.post", args=[pk]))
 
 

@@ -3,7 +3,9 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head> 
-    <link rel = "Stylesheet" type = "text/css" href = "/static/blogcss.css" /> 
+    <link rel="Stylesheet" type="text/css" href="/static/blogcss.css" /> 
+    <script src="/static/jquery-1.4.4.min.js" type="text/javascript"></script>
+    <script src="/static/jquery.reveal.js" type="text/javascript"></script>
     <title>{% block title %}Blog{% endblock %}</title> 
 </head>
 
@@ -13,6 +15,20 @@
 
     {% endblock %}
 
+
+<div id="myModal" class="reveal-modal">
+     <h1>New Entry</h1>
+     <form action="." method="POST">
+    {% csrf_token %}
+	    <table>
+	        {{ form.as_table }}
+	        Title: <input type="text" name="title"><br><br>
+	        Content: <input type="text" name="content"><br>
+	    </table>
+    <input type="submit" name="add" value="Add" />
+	</form>
+     <a class="close-reveal-modal">&#215;</a>
+</div>
 
 </body>
 </html>

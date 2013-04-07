@@ -28,7 +28,7 @@
           
           User Name: <input type="text" name="username">
           Password: <input type="password" name="password">
-          <button type="submit">Log In</button>
+          <button type="submit" name="login">Log In</button>
         </form>
         <p><a href="/create_user/">New User</a></p>
       </div>   
@@ -55,7 +55,7 @@
 
     <!-- Main Blog Content -->
     <div class="large-9 columns" role="content">
-      <p><a href="#" data-reveal-id="exampleModal" class="radius button">Example Modal…</a></p>
+<a href="#" data-reveal-id="myModal">Add a new entry</a>    
     {% if posts %}  
       {% for post in posts %}
         <p>{% include 'abbreviated_entry.html' %}</p>
